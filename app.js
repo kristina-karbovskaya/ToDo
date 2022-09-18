@@ -19,9 +19,7 @@ const tasks = [
     title: 'Eu ea incididunt sunt consectetur fugiat non.'
   }
 ];
-// ----------------------------------------------------
 
-// -----------------------------------------------------
 (function (arrOfTasks) {
   const objOfTasks = arrOfTasks.reduce((acc, task) => {
     acc[task._id] = task;
@@ -98,8 +96,7 @@ const tasks = [
     }
   };
   let lastSelectedTheme = localStorage.getItem('theme') || 'default';
-
-  //Elements UI
+  
   const listContainer = document.querySelector(
     '.tasks-list-section .list-group'
   );
@@ -108,11 +105,10 @@ const tasks = [
   const inputBody = form.elements['body'];
   const themeSelect = document.getElementById('themeSelect');
 
-  // События events
-  setTheme(lastSelectedTheme); // сохрн. темы
+  setTheme(lastSelectedTheme); 
   renderAllTasks(objOfTasks);
   form.addEventListener('submit', onFormSubmitHandler);
-  listContainer.addEventListener('click', onDeleteHandler); // вешаем на него, ибо разметка сделана через джс(нет точки доступа к кнопке удаления). Поэтому вешаем событие на весь список
+  listContainer.addEventListener('click', onDeleteHandler);
   themeSelect.addEventListener('change', onThemeSelectHandler);
 
   function renderAllTasks(tasksList) {
@@ -130,7 +126,6 @@ const tasks = [
   }
 
   function listItemTemplate({ _id, title, body } = {}) {
-    // <--  destructuring
     const li = document.createElement('li');
     li.classList.add(
       'list-group-item',
@@ -140,7 +135,7 @@ const tasks = [
       'mt-2'
     );
 
-    // ДЛЯ ЛИШКИ НАВЕШИВАЕМ АТРИБУТ, ЧТОБы ПО АЙДИ УДАЛЯТЬ ТАСК
+
     li.setAttribute('data-task-id', _id);
 
     const span = document.createElement('span');
@@ -161,79 +156,63 @@ const tasks = [
 
     return li;
   }
-  // обработчик события сабмит(кнопка добавления таска)
+
   function onFormSubmitHandler(e) {
-    e.preventDefault(); //чтобы прекратить стандартное действие(сабмит вызывает перезагрузку стр)
+    e.preventDefault();
     const titleValue = inputTitle.value;
     const bodyValue = inputBody.value;
-    // проверка, что форма не пустая: 1)(titleValue.length == 0 || bodyValue.length === 0) 2)(!titleValue || !bodyValue)
     if (titleValue.length == 0 || bodyValue.length === 0) {
       alert('Все поля должны быть заполнены');
-      return; //чтобы функция дальше не выполнялась
+      return;
     }
 
     const task = createNewTask(titleValue, bodyValue);
-    // на основе одного обьекта генерируем(с пом.listItemTemplate) новую лишку
     const listItem = listItemTemplate(task);
-    //добавляем задачу в дом(в одну из 4-х позиций, а именно - начало)
     listContainer.insertAdjacentElement('afterbegin', listItem);
-    //сбрасывает все, как было до загрузки в форме
     form.reset();
   }
-
-  // функ. которая будет создавать новый тааск. Вызываться будет из обработчки выше
+  
   function createNewTask(title, body) {
     const newTask = {
       title,
       body,
-      completed: false, //так как это новая задача
+      completed: false,
       _id: `task-${Math.random()}`
     };
-
-    //добавляем в список задач. 1) Под новым айдишником - новая задача
     objOfTasks[newTask._id] = newTask;
-
-    //возврщ.копию задачи
     return { ...newTask };
   }
 
-  // удаляем таск в дом
   function deleteTask(id) {
-    //получаем заголовок по айди
     const { title } = objOfTasks[id];
-    // / запрос на то, точно ли хотим удалить таск
     const isConfirm = confirm(
       `Вы уверены, что хотите удалить задачу: ${title}?`
     );
     if (!isConfirm) {
-      return isConfirm; // если человек нажал ОТМЕНА. Будет фолс
+      return isConfirm;
     }
-    // Если человек нажал - ОК, то удаляем таск с определ. айдишником
     delete objOfTasks[id];
     return isConfirm;
   }
 
-  // удаляем таск с HTML-разметки
+
   function deleteTaskFromHTML(confirmed, elem) {
     if (!confirmed) {
       return;
     }
-    elem.remove(); //выносим в отдельную функию, ибо функционал может расширяться
+    elem.remove(); 
   }
 
   function onDeleteHandler({ target }) {
-    //вытягиваем сразу таргет ивента
     if (target.classList.contains('delete-btn')) {
-      const parent = target.closest('[data-task-id]'); //передаем атрибут
-      const id = parent.dataset.taskId; //пишем taskId(вместо task-id),ибо у нас атрибут задан через дефис
+      const parent = target.closest('[data-task-id]');
+      const id = parent.dataset.taskId;
       const confirmed = deleteTask(id);
 
-      deleteTaskFromHTML(confirmed, parent); //confirmed для проверки удаляем его или нет
+      deleteTaskFromHTML(confirmed, parent);
     }
   }
 
-  // ДВЕ ФУНКЦ. ДЛЯ ТЕМ
-  // 1) Обраьотчик события
   function onThemeSelectHandler(e) {
     const selectedTheme = themeSelect.value;
     const isConfirmed = confirm(
@@ -248,7 +227,6 @@ const tasks = [
     localStorage.setItem('theme', selectedTheme);
   }
 
-  // 2)Функц. которая устанавливает тему
   function setTheme(nameTheme) {
     const selectedThemeObj = themes[nameTheme];
     Object.entries(selectedThemeObj).forEach(([key, value]) => {
