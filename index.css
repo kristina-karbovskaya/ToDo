@@ -67,6 +67,7 @@ body {
   background: var(--input-bg-color);
   border-color: var(--input-border-color);
   color: var(--input-text-color);
+  cursor: pointer;
 }
 
 .form-control:focus {
