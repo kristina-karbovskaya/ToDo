@@ -1,2 +1,2 @@
 # Todo-List
-Simple Todo List with theme selected
+Simple Todo List with theme select
